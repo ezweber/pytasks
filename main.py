@@ -20,16 +20,16 @@ if args.add is not None:
             f.write(f"{args.add}\n")
 
 elif args.delete is not None:
-    with open(f'{home_dir}/todolist.txt', 'r') as fr:
-        lines = fr.readlines()
-        ptr = 1
+    with open(f"{home_dir}/todolist.txt", 'r+') as fp:
+        lines = fp.readlines()
+        
+        fp.seek(0)
+        fp.truncate()
 
-        with open(f'{home_dir}/todolist.txt', 'w') as fw:
-            for line in lines:
-               
-                if ptr != args.delete:
-                    fw.write(line)
-                ptr += 1
+        for number, line in enumerate(lines):
+            if number not in [args.delete-1]:
+                fp.write(line)
+
     print(f"Deleting line {args.delete}")
 
 elif args.list is True:
