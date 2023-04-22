@@ -4,43 +4,67 @@ import argparse
 import os.path
 
 parser = argparse.ArgumentParser(description="A simple tool to keep track of tasks.")
-parser.add_argument("-a", "--add", help="Add an item to your todo list", type=str)
-parser.add_argument("-d", "--delete", help="Delete an item from your todo list", type=int)
-parser.add_argument("-l", "--list", help="List Items on your todo list", action='store_true')
+parser.add_argument("-a", "--add", help="Add an item to your todo list", metavar=("\"List name\"", "\"Item\""), type=str, nargs=2)
+parser.add_argument("-r", "--remove", help="Delete an item from your todo list", metavar=("\"List name\"", "\"Item number\""), type=str, nargs=2)
+parser.add_argument("-l", "--list", help="Lists your lists", action="store_true")
+parser.add_argument("-d", "--display", help="Creates a new list", metavar="\"List name\"", type=str)
 
 args = parser.parse_args()
-home_dir = os.path.expanduser('~')
+list_path = f"{os.path.expanduser('~')}/.pytasks"
 
-if args.add is not None:
-    if os.path.exists(f"{home_dir}/todolist.txt"):
-        with open(f"{home_dir}/todolist.txt", "a") as f:
-            f.write(f"{args.add}\n")
+def add(args):
+    if os.path.exists(f"{list_path}/{args.add[0]}.txt"):
+        with open(f"{list_path}/{args.add[0]}.txt", "a") as f:
+            f.write(f"{args.add[1]}\n")
     else:
-        with open(f"{home_dir}/todolist.txt", "w") as f:
-            f.write(f"{args.add}\n")
+        with open(f"{list_path}/{args.add[0]}.txt", "w") as f:
+            f.write(f"{args.add[1]}\n")
 
-elif args.delete is not None:
-    with open(f"{home_dir}/todolist.txt", 'r+') as fp:
+def remove(args):
+    with open(f"{list_path}/{args.remove[0]}.txt", 'r+') as fp:
+
         lines = fp.readlines()
-        
         fp.seek(0)
         fp.truncate()
 
         for number, line in enumerate(lines):
-            if number not in [args.delete-1]:
+            if number not in [int(args.remove[1])-1]:
                 fp.write(line)
+        
+        print(f"Deleting line {args.remove[1]}")
 
-    print(f"Deleting line {args.delete}")
+def display(args):
 
-elif args.list is True:
-    print("\033[01m\033[32m------TODO------\033[0m")
-    with open(f'{home_dir}/todolist.txt', 'r') as fr:
+    print(f"\033[01m\033[32m------{args.display}------\033[0m")
+
+    with open(f'{list_path}/{args.display}.txt', 'r') as fr:
         lines = fr.readlines()
         x =1
         for i in lines:
             print(f"\033[31m{x}\033[0m - ", end="")
             print(i, end="")
             x+=1
-    print("\033[01m\033[32m----------------\033[0m")
-else:
-    print("Need an argument")
+
+    print("\033[01m\033[32m----------------\033[0m")        
+
+def parseArgs(args): 
+    if args.add is not None:
+        add(args)
+        
+    elif args.remove is not None:
+        remove(args)
+    
+    elif args.list is not None:
+        print(*os.listdir(list_path), sep="\n")
+
+    elif args.display is not None:
+        display(args)
+        
+    else:
+        print("Needs an argument")
+
+
+if os.path.exists(list_path) != True:
+    os.mkdir(list_path)
+
+parseArgs(args)
