@@ -54,7 +54,7 @@ def parseArgs(args):
     elif args.remove is not None:
         remove(args)
     
-    elif args.list is not None:
+    elif args.list:
         print(*os.listdir(list_path), sep="\n")
 
     elif args.display is not None:
