@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(description="A simple tool to keep track of tas
 parser.add_argument("-a", "--add", help="Add an item to your todo list", metavar=("\"List name\"", "\"Item\""), type=str, nargs=2)
 parser.add_argument("-r", "--remove", help="Delete an item from your todo list", metavar=("\"List name\"", "\"Item number\""), type=str, nargs=2)
 parser.add_argument("-l", "--list", help="Lists your lists", action="store_true")
-parser.add_argument("-d", "--display", help="Creates a new list", metavar="\"List name\"", type=str)
+parser.add_argument("-d", "--display", help="Displays the list", metavar="\"List name\"", type=str)
 
 args = parser.parse_args()
 list_path = f"{os.path.expanduser('~')}/.pytasks"
